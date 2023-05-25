@@ -1,18 +1,16 @@
 ﻿@model PROG3A_POE.Models.User
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 
+<h1>Edit</h1>
 
-<h1>Create</h1>
-
-<h4>Farmer</h4>
+<h4>User</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" method="post">
-            @Html.AntiForgeryToken()
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label">First Name</label>
@@ -29,19 +27,20 @@
                 <input asp-for="Password" class="form-control" name="txtPassword" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="dropdown my-2 form-group">
-                <button asp-for="User_Roles" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButton" name="dpRoles">
-                    Choose Role
+            <div class="dropdown my-2">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButton">
+                    @Model.User_Roles
                 </button>
-                <ul class="dropdown-menu form-group">
-                    <li><a class="dropdown-item" asp-for="User_Roles" href="#" onclick="selectRole('Farmer')" >Farmer</a></li>
-                    <li><a class="dropdown-item" asp-for="User_Roles" href="#" onclick="selectRole('Employee')" >Employee</a></li>
+                <ul class="dropdown-menu">
+                    <li class="@(Model.User_Roles == "Farmer" ? "active" : "")"><a class="dropdown-item" href="#" onclick="selectRole('Farmer')">Farmer</a></li>
+                    <li class="@(Model.User_Roles == "Employee" ? "active" : "")"><a class="dropdown-item" href="#" onclick="selectRole('Employee')">Employee</a></li>
                 </ul>
-                <input type="hidden" name="role" id="selectedRole" />
+                <input type="hidden" name="role" id="selectedRole" value="@Model.User_Roles" />
             </div>
 
+
             <div>
-                <button type="submit" class="btn btn-primary my-2" asp-action="Create">Submit</button>
+                <button type="submit" class="btn btn-primary my-2" asp-action="Edit">Update</button>
             </div>
         </form>
     </div>
@@ -50,10 +49,6 @@
 <div>
     <a asp-action="AllFarmers">Back to List</a>
 </div>
-
-
-
-
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

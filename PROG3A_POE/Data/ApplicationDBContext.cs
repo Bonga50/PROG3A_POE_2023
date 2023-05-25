@@ -16,7 +16,7 @@ namespace PROG3A_POE.Data
             _config = configuration;
             con = _config.GetConnectionString("dbConnect");
         }
-        //methed t get list of farmers 
+        //methed to get list of farmers 
         public List<User> GetAllDistinctUsers(string UserRole) {
         
             List<User> listFarmers = new List<User>();
@@ -56,11 +56,11 @@ namespace PROG3A_POE.Data
             }
         }
         //read User
-        public User getUser(User CertainUser) {
+        public User getUser(string UserID) {
             User myUser = new User();
 
             SqlConnection myconnection = new SqlConnection(con);
-            SqlDataAdapter cmdSelect = new SqlDataAdapter($"select * from ApplicationUser where UserId = '{CertainUser.Username}'", myconnection);
+            SqlDataAdapter cmdSelect = new SqlDataAdapter($"select * from ApplicationUser where UserId = '{UserID}'", myconnection);
             DataTable dt = new DataTable();
             DataRow dr;
 

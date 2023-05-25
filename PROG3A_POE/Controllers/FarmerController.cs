@@ -27,7 +27,7 @@ namespace PROG3A_POE.Controllers
         public ActionResult AllFarmers()
         {
            
-            FarmerList = dbhelper.GetAllFarmers();
+            FarmerList = dbhelper.GetAllDistinctUsers("Farmer");
             return View(FarmerList);
         }
         // GET: FarmerController
@@ -37,9 +37,10 @@ namespace PROG3A_POE.Controllers
         }
 
         // GET: FarmerController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(string id)
         {
-            return View();
+            
+            return View(dbhelper.getUser(id));
         }
 
         // GET: FarmerController/Create
@@ -55,13 +56,13 @@ namespace PROG3A_POE.Controllers
         {
             try
             {
-                string FarmerId = collection["txtstId"];
+                string FarmerId = collection["txtUsername"];
                 string FarmerName = collection["txtFirstName"];
-                string FarmerPassword = collection["txtSurname"];
-
-                User Farmer = new User(FarmerName, FarmerId, FarmerPassword,"Farmer");
-                dbhelper.AddFarmer(Farmer);
-                return RedirectToAction(nameof(Index));
+                string FarmerPassword = collection["txtPassword"];
+                string UserRole = collection["role"];
+                User Farmer = new User(FarmerName, FarmerId, FarmerPassword, UserRole);
+                dbhelper.AddUser(Farmer);
+                return RedirectToAction("AllFarmers");
             }
             catch
             {
@@ -71,7 +72,7 @@ namespace PROG3A_POE.Controllers
 
 
         // GET: FarmerController/Edit/5
-        public ActionResult ViewProducts(int id)
+        public ActionResult ViewProducts(string id)
         {
             return View();
         }
@@ -79,10 +80,11 @@ namespace PROG3A_POE.Controllers
         // POST: FarmerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ViewProducts(int id, IFormCollection collection)
+        public ActionResult ViewProducts(string id, IFormCollection collection)
         {
             try
             {
+                
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -92,19 +94,25 @@ namespace PROG3A_POE.Controllers
         }
 
         // GET: FarmerController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(string id)
         {
-            return View();
+            return View(dbhelper.getUser(id));
         }
 
         // POST: FarmerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(string id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                string FarmerId = collection["txtUsername"];
+                string FarmerName = collection["txtFirstName"];
+                string FarmerPassword = collection["txtPassword"];
+                string UserRole = collection["role"];
+                User Farmer = new User(FarmerName, FarmerId, FarmerPassword, UserRole);
+                dbhelper.UpdateUser(Farmer);
+                return RedirectToAction("AllFarmers");
             }
             catch
             {
