@@ -26,10 +26,38 @@ namespace PROG3A_POE.Controllers
         // GET: FarmerController
         public ActionResult AllFarmers()
         {
-           
-            FarmerList = dbhelper.GetAllDistinctUsers("Farmer");
+            string selectedRole = TempData["SelectedRole"] as string;
+
+            if (string.IsNullOrEmpty(selectedRole))
+            {
+                selectedRole = "Farmer"; // Set the default role here
+                TempData["SelectedRole"] = selectedRole; // Store the selected role in TempData
+            }
+
+
+            FarmerList = dbhelper.GetAllDistinctUsers(selectedRole);
             return View(FarmerList);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AllFarmers(IFormCollection form)
+        {
+            try
+            {
+                string selectedRole = form["role"];
+                TempData["SelectedRole"] = selectedRole;
+                FarmerList = dbhelper.GetAllDistinctUsers(selectedRole);
+                return View(FarmerList);
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        
+      
         // GET: FarmerController
         public ActionResult Index()
         {

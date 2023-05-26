@@ -1,10 +1,30 @@
 ﻿@model IEnumerable<PROG3A_POE.Models.User>
-
 @{
     ViewData["Title"] = "AllFarmers";
+    string selectedRole = TempData["SelectedRole"] as string;
+    if (string.IsNullOrEmpty(selectedRole))
+    {
+        selectedRole = "Farmer"; // Set the default role here
+    }
 }
 
-<h1>AllFarmers</h1>
+
+<h1>All Users</h1>
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="dropdownButton">
+        @selectedRole
+    </button>
+    <ul class="dropdown-menu">
+        <li class="@(selectedRole == "Farmer" ? "active" : "")"><a class="dropdown-item" href="#" onclick="selectRole('Farmer')">Farmer</a></li>
+        <li class="@(selectedRole == "Employee" ? "active" : "")"><a class="dropdown-item" href="#" onclick="selectRole('Employee')">Employee</a></li>
+    </ul>
+</div>
+
+<form id="form" method="post">
+    <input type="hidden" name="role" id="selectedRole" value="@selectedRole" />
+</form>
+
 
 <p>
     <a asp-action="Create">Create New Farmer</a>
@@ -52,3 +72,20 @@
 }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        function selectRole(role) {
+            document.getElementById('dropdownButton').textContent = role;
+            document.getElementById('selectedRole').value = role;
+            document.getElementById('form').action = '@Url.Action("AllFarmers","Farmer")'; // Set the form action dynamically
+            document.getElementById('form').submit(); // Submit the form to update TempData
+        }
+
+        // Update dropdown menu text when page loads (optional)
+        window.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('dropdownButton').textContent = '@selectedRole';
+        });
+    </script>
+
+}
