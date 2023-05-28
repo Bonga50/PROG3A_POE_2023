@@ -68,7 +68,7 @@ namespace PROG3A_POE.Controllers
         public ActionResult Details(string id)
         {
             
-            return View(dbhelper.getUser(id));
+            return View(dbhelper.getAUser(id));
         }
 
         // GET: FarmerController/Create
@@ -88,8 +88,8 @@ namespace PROG3A_POE.Controllers
                 string FarmerName = collection["txtFirstName"];
                 string FarmerPassword = collection["txtPassword"];
                 string UserRole = collection["role"];
-                User Farmer = new User(FarmerName, FarmerId, FarmerPassword, UserRole);
-                dbhelper.AddUser(Farmer);
+                User ClientUser = new User(FarmerName, FarmerId, FarmerPassword, UserRole);
+                dbhelper.AddUser(ClientUser);
                 return RedirectToAction("AllFarmers");
             }
             catch
@@ -102,29 +102,21 @@ namespace PROG3A_POE.Controllers
         // GET: FarmerController/Edit/5
         public ActionResult ViewProducts(string id)
         {
-            return View();
+            if (FarmerId != id) { FarmerId = id; }
+
+            ViewBag.Id = id;
+            return View(dbhelper.GetProducts(FarmerId));
         }
 
-        // POST: FarmerController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult ViewProducts(string id, IFormCollection collection)
-        {
-            try
-            {
-                
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+       
 
         // GET: FarmerController/Edit/5
         public ActionResult Edit(string id)
         {
-            return View(dbhelper.getUser(id));
+            
+
+            
+            return View(dbhelper.getAUser(id));
         }
 
         // POST: FarmerController/Edit/5
@@ -139,7 +131,7 @@ namespace PROG3A_POE.Controllers
                 string FarmerPassword = collection["txtPassword"];
                 string UserRole = collection["role"];
                 User Farmer = new User(FarmerName, FarmerId, FarmerPassword, UserRole);
-                dbhelper.UpdateUser(Farmer);
+                dbhelper.UpdateUser(Farmer,id);
                 return RedirectToAction("AllFarmers");
             }
             catch
@@ -149,24 +141,129 @@ namespace PROG3A_POE.Controllers
         }
 
         // GET: FarmerController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(string id)
         {
-            return View();
+
+            return View(dbhelper.getAUser(id));
         }
 
         // POST: FarmerController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(string id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                dbhelper.deleteUserProducts(id);
+                dbhelper.DeleteUser(id);
+                
+                return RedirectToAction("AllFarmers");
             }
             catch
             {
                 return View();
             }
         }
+
+
+        // GET: FarmerController/CreateProduct/5
+        public ActionResult CreateProduct(string id)
+        {
+            
+            ViewBag.Id = id;
+            return View();
+        }
+
+        // POST: FarmerController/CreateProduct/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateProduct(string id, IFormCollection collection)
+        {
+            try
+            {
+
+                string productName = collection["txtProductName"];
+                string productType = collection["txtproductType"];
+                int productQuantity = Int32.Parse(collection["txtQuantity"]);
+                
+                Product prod = new Product(productName, productType, DateTime.Now, productQuantity);
+                dbhelper.createProduct(prod, id);
+                
+                return RedirectToAction("ViewProducts", new { id = id });
+
+                
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: FarmerController/EditProduct/5
+        public ActionResult EditProduct(int id)
+        {
+            
+            ViewBag.Id = id;
+            return View(dbhelper.GetDistinctProduct(id));
+        }
+
+        // POST: FarmerController/EditProduct/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditProduct(int id, IFormCollection collection)
+        {
+            try
+            {
+
+                string productName = collection["txtProductName"];
+                string productType = collection["txtproductType"];
+                DateTime date = DateTime.Parse(collection["txtProductDate"]);
+                int productQuantity = Int32.Parse(collection["txtQuantity"]);
+
+                Product prod = new Product(id, productName, productType, date, productQuantity);
+                dbhelper.updateProduct(prod);
+
+                return RedirectToAction("ViewProducts",new{ id = FarmerId });
+
+
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: FarmerController/DetailsProduct/5
+        public ActionResult DetailsProduct(int id)
+        {
+
+            ViewBag.Id = id;
+            return View(dbhelper.GetDistinctProduct(id));
+        }
+        public ActionResult DeleteProduct(int id)
+        {
+
+            ViewBag.Id = id;
+            return View(dbhelper.GetDistinctProduct(id));
+        }
+
+        // POST: FarmerController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteProduct(int id, IFormCollection collection)
+        {
+            try
+            {
+                dbhelper.deleteProduct(id);
+                
+
+                return RedirectToAction("ViewProducts", new { id = FarmerId });
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
     }
 }

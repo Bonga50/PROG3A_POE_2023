@@ -18,12 +18,11 @@ namespace PROG3A_POE.Controllers
             dbhelper = new ApplicationDBContext(configuration);
         }
 
-        public List<Product> ProductList;
-        //public List<Product> Products = new List<Product>() { new Product("001","Meat","Protien", DateTime.Parse("12/30/2015"),4),
-        //new Product("002","Chicken","Protien", DateTime.Parse("12/30/2014"),4)};
+       
         // GET: ProductController
         public ActionResult AllProducts()
         {
+            
             return View(dbhelper.GetProducts(Username));
         }
         // GET: ProductController
@@ -35,7 +34,7 @@ namespace PROG3A_POE.Controllers
         // GET: ProductController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            return View(dbhelper.GetDistinctProduct(id));
         }
 
         // GET: ProductController/Create
@@ -51,7 +50,13 @@ namespace PROG3A_POE.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                string productName = collection["txtProductName"];
+                string productType = collection["txtproductType"];
+                int productQuantity = Int32.Parse(collection["txtQuantity"]);
+                
+                Product prod = new Product(productName, productType,DateTime.Now, productQuantity);
+                dbhelper.createProduct(prod,Username);
+                return RedirectToAction("AllProducts");
             }
             catch
             {
@@ -62,7 +67,7 @@ namespace PROG3A_POE.Controllers
         // GET: ProductController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            return View(dbhelper.GetDistinctProduct( id));
         }
 
         // POST: ProductController/Edit/5
@@ -72,7 +77,15 @@ namespace PROG3A_POE.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                string productName = collection["txtProductName"];
+                string productType = collection["txtproductType"];
+                DateTime date = DateTime.Parse(collection["txtProductDate"]);
+                int productQuantity = Int32.Parse(collection["txtQuantity"]);
+
+                Product prod = new Product(id,productName, productType, date, productQuantity);
+                dbhelper.updateProduct(prod);
+                return RedirectToAction("AllProducts");
+                
             }
             catch
             {
@@ -83,7 +96,7 @@ namespace PROG3A_POE.Controllers
         // GET: ProductController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            return View(dbhelper.GetDistinctProduct( id));
         }
 
         // POST: ProductController/Delete/5
@@ -93,7 +106,8 @@ namespace PROG3A_POE.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                dbhelper.deleteProduct(id);
+                return RedirectToAction("AllProducts");
             }
             catch
             {

@@ -21,10 +21,9 @@
 
         }
 
-        public bool checkUser(string user, string pass, List<User> Users)
+        public bool checkUser(string user, string pass, User filteredKeys)
         {
 
-            User filteredKeys = Users.Find(x => x.Username.Equals(user) && x.Password.Equals(pass));
             if (filteredKeys.Username.Equals(user) && filteredKeys.Password.Equals(pass))
             {
                 return true;
@@ -34,10 +33,7 @@
 
         }
 
-        public User getUser(string user, string pass, List<User> Users) {
-            User filteredUsers = Users.Find(x => x.Username.Equals(user) && x.Password.Equals(pass));
-            return filteredUsers;
-        }
+        
 
     
 }

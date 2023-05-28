@@ -1,13 +1,16 @@
 ﻿@model IEnumerable<PROG3A_POE.Models.Product>
 
 @{
-    ViewData["Title"] = "AllProducts";
+    ViewData["Title"] = "ViewProducts";
+    TempData.Keep("FarmerId");
+    
 }
 
-<h1>AllProducts</h1>
+<h1>Products for @ViewBag.Id</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="CreateProduct" asp-route-id="@ViewBag.Id">Create New</a>
+
 </p>
 <table class="table">
     <thead>
@@ -49,11 +52,12 @@
                 @Html.DisplayFor(modelItem => item.Quantity)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.ProductID }) |
-                    @Html.ActionLink("Details", "Details", new { id=item.ProductID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id=item.ProductID })
+                @Html.ActionLink("Edit", "EditProduct", new {id=item.ProductID  }) |
+                    @Html.ActionLink("Details", "DetailsProduct", new { id=item.ProductID}) |
+                    @Html.ActionLink("Delete", "DeleteProduct", new { id=item.ProductID })
             </td>
         </tr>
 }
     </tbody>
 </table>
+<a asp-action="AllFarmers">Back to List</a>

@@ -1,0 +1,68 @@
+﻿@model PROG3A_POE.Models.Product
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Product</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label">Product Name</label>
+                <input asp-for="ProductName" class="form-control" name="txtProductName"/>
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+
+            <div class="dropdown my-2 form-group">
+                <label asp-for="ProductType" class="control-label">Choose Product Type</label>
+                <button asp-for="ProductType" class="btn btn-secondary dropdown-toggle mx-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="dpProductType" name="dpProdType">
+                    Product Type
+                </button>
+                <ul class="dropdown-menu form-group">
+                    <!-- Added "dropdown-menu-end" class -->
+                    <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Fruits')">Fruits</a></li>
+                    <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Vegetables')">Vegetables</a></li>
+                    <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Grains')">Grains</a></li>
+                    <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Dairy Products')">Dairy Products</a></li>
+                    <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Poultry')">Poultry</a></li>
+                </ul>
+                <input type="hidden" name="txtproductType" id="selectedProdType" />
+            </div>
+
+
+            @*<div class="form-group">
+                <label asp-for="ProductDate" class="control-label"></label>
+                <input asp-for="ProductDate" class="form-control" />
+                <span asp-validation-for="ProductDate" class="text-danger"></span>
+            </div>*@
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label">Quantity</label>
+                <input asp-for="Quantity" class="form-control" name="txtQuantity" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group my-2">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="AllProducts">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function selectProdType(prodType) {
+            document.getElementById('dpProductType').textContent = prodType;
+            document.getElementById('selectedProdType').value = prodType;
+        }
+    </script>
+}

@@ -3,12 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using PROG3A_POE.Models;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 
 namespace PROG3A_POE.Data
 {
-    public class ApplicationDBContext 
+    public class ApplicationDBContext
     {
-       
+
         private string con;
         private IConfiguration _config;
         public ApplicationDBContext(IConfiguration configuration)
@@ -18,7 +19,7 @@ namespace PROG3A_POE.Data
         }
         //methed to get list of farmers 
         public List<User> GetAllDistinctUsers(string UserRole) {
-        
+
             List<User> listFarmers = new List<User>();
             SqlConnection myconnection = new SqlConnection(con);
             SqlDataAdapter cmdSelect = new SqlDataAdapter($"select * from ApplicationUser where UserRole = '{UserRole}'", myconnection);
@@ -36,7 +37,7 @@ namespace PROG3A_POE.Data
                     dr = dt.Rows[i];
                     listFarmers.Add(new User(
                         (string)dr["FirstName"],
-                        (string)dr["UserId"], 
+                        (string)dr["UserId"],
                         (string)dr["Password"],
                         (string)dr["UserRole"]));
                 }
@@ -44,7 +45,7 @@ namespace PROG3A_POE.Data
 
 
             return listFarmers;
-        
+
         }
         // adding a new User
         public void AddUser(User newUser) {
@@ -56,11 +57,11 @@ namespace PROG3A_POE.Data
             }
         }
         //read User
-        public User getUser(string UserID) {
+        public User getUser(string userID, string password) {
             User myUser = new User();
 
             SqlConnection myconnection = new SqlConnection(con);
-            SqlDataAdapter cmdSelect = new SqlDataAdapter($"select * from ApplicationUser where UserId = '{UserID}'", myconnection);
+            SqlDataAdapter cmdSelect = new SqlDataAdapter($"select * from ApplicationUser where UserId = '{userID}'AND Password='{password}' ;", myconnection);
             DataTable dt = new DataTable();
             DataRow dr;
 
@@ -73,22 +74,51 @@ namespace PROG3A_POE.Data
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     dr = dt.Rows[i];
-                    myUser= new User(
+                    myUser = new User(
                         (string)dr["FirstName"],
                         (string)dr["UserId"],
                         (string)dr["Password"],
-                        (string)dr["UserRole"] );
+                        (string)dr["UserRole"]);
+                }
+            }
+
+            return myUser;
+        }
+
+        public User getAUser(string userID)
+        {
+            User myUser = new User();
+
+            SqlConnection myconnection = new SqlConnection(con);
+            SqlDataAdapter cmdSelect = new SqlDataAdapter($"select * from ApplicationUser where UserId = '{userID}' ;", myconnection);
+            DataTable dt = new DataTable();
+            DataRow dr;
+
+            myconnection.Open();
+            cmdSelect.Fill(dt);
+
+            if (dt.Rows.Count > 0)
+            {
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    dr = dt.Rows[i];
+                    myUser = new User(
+                        (string)dr["FirstName"],
+                        (string)dr["UserId"],
+                        (string)dr["Password"],
+                        (string)dr["UserRole"]);
                 }
             }
 
             return myUser;
         }
         //Update User
-        public void UpdateUser(User CertainUser) {
+        public void UpdateUser(User CertainUser, string prevUsername) {
 
             using (SqlConnection myconnection = new SqlConnection(con))
             {
-                SqlCommand sqlCommand = new SqlCommand($"UPDATE ApplicationUser SET FirstName = '{CertainUser.Name}', Password = '{CertainUser.Password}', UserRole = '{CertainUser.User_Roles}' WHERE UserId = '{CertainUser.Username}';", myconnection);
+                SqlCommand sqlCommand = new SqlCommand($"UPDATE ApplicationUser SET FirstName = '{CertainUser.Name}', Password = '{CertainUser.Password}', UserRole = '{CertainUser.User_Roles}' WHERE UserId = '{prevUsername}';", myconnection);
                 myconnection.Open();
                 sqlCommand.ExecuteNonQuery();
             }
@@ -105,13 +135,14 @@ namespace PROG3A_POE.Data
             }
 
         }
+
         //Create Product
 
-        public void createProduct(Product newProduct) {
+        public void createProduct(Product newProduct, string userId) {
             using (SqlConnection myconnection = new SqlConnection(con))
             {
-                SqlCommand sqlCommand = new SqlCommand($"INSERT INTO Products ( ProductName, ProductType, ProductDate, Quantity) " +
-                    $"VALUES ( '{newProduct.ProductName}', '{newProduct.ProductType}', '{newProduct.ProductDate}', {newProduct.Quantity});", myconnection);
+                SqlCommand sqlCommand = new SqlCommand($"INSERT INTO Products ( ProductName, ProductType, ProductDate, quantity, FarmerId) " +
+                    $"VALUES ( '{newProduct.ProductName}', '{newProduct.ProductType}', '{newProduct.ProductDate}', {newProduct.Quantity},'{userId}');", myconnection);
                 myconnection.Open();
                 sqlCommand.ExecuteNonQuery();
             }
@@ -127,11 +158,22 @@ namespace PROG3A_POE.Data
             }
         }
         //delete product
-        public void deleteProduct(Product CertainProduct)
+        public void deleteProduct(int CertainProductID)
         {
             using (SqlConnection myconnection = new SqlConnection(con))
             {
-                SqlCommand sqlCommand = new SqlCommand($"DELETE FROM Products WHERE ProductID = {CertainProduct.ProductID};", myconnection);
+                SqlCommand sqlCommand = new SqlCommand($"DELETE FROM Products WHERE ProductID = {CertainProductID};", myconnection);
+                myconnection.Open();
+                sqlCommand.ExecuteNonQuery();
+            }
+
+        }
+        //delete all products for a user
+        public void deleteUserProducts(string UserId)
+        {
+            using (SqlConnection myconnection = new SqlConnection(con))
+            {
+                SqlCommand sqlCommand = new SqlCommand($"DELETE FROM Products WHERE FarmerId = '{UserId}';", myconnection);
                 myconnection.Open();
                 sqlCommand.ExecuteNonQuery();
             }
@@ -139,7 +181,7 @@ namespace PROG3A_POE.Data
         }
         //getting a list of products for a specific farmer
         public List<Product> GetProducts(string UserId) {
-        List<Product> products = new List<Product>();
+            List<Product> products = new List<Product>();
             SqlConnection myconnection = new SqlConnection(con);
             SqlDataAdapter cmdSelect = new SqlDataAdapter($"select * from Products where FarmerId ='{UserId}';", myconnection);
             DataTable dt = new DataTable();
@@ -168,5 +210,39 @@ namespace PROG3A_POE.Data
         }
 
 
+
+
+        //getting a object of product for a specific farmer
+        public Product GetDistinctProduct(int prodId)
+        {
+            Product myProduct = new Product();
+            SqlConnection myconnection = new SqlConnection(con);
+            SqlDataAdapter cmdSelect = new SqlDataAdapter($"select * from Products where ProductID = {prodId};", myconnection);
+            DataTable dt = new DataTable();
+            DataRow dr;
+
+            myconnection.Open();
+            cmdSelect.Fill(dt);
+
+            if (dt.Rows.Count > 0)
+            {
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    dr = dt.Rows[i];
+                    myProduct = new Product(
+                        Convert.ToInt32(dr["ProductID"]),
+                        (string)dr["ProductName"],
+                        (string)dr["ProductType"],
+                        (DateTime)dr["ProductDate"],
+                        Convert.ToInt32(dr["quantity"]));
+                }
+            }
+
+
+            return myProduct;
+        }
+
     }
 }
+

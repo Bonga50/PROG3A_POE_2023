@@ -17,5 +17,10 @@ namespace PROG3A_POE.Controllers
             get => TempData["Username"] as string;
             set => TempData["Username"] = value;
         }
+        protected string FarmerId
+        {
+            get => TempData["FarmerId"] as string;
+            set => TempData["FarmerId"] = value;
+        }
     }
 }

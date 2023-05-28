@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PROG3A_POE.Data;
 using PROG3A_POE.Models;
 using System.Security.Claims;
 
@@ -9,10 +10,16 @@ namespace PROG3A_POE.Controllers
 {
     public class UserController : BaseController
     {
-      
-        public List<User> Users = new List<User>() {
-            new User("Aatorox","Emp1","Pass1","Employee"),
-            new User("Dris","Farm1", "Pass1", "Farmer"), };
+        private string con;
+        private IConfiguration _config;
+        ApplicationDBContext dbhelper;
+
+        public UserController(IConfiguration configuration)
+        {
+            dbhelper = new ApplicationDBContext(configuration);
+        }
+
+
         // GET: UserController
         public ActionResult Login()
         {
@@ -51,11 +58,10 @@ namespace PROG3A_POE.Controllers
             if (ModelState.IsValid)
             {
                 // Check the username and password 
-                bool isAuthenticated = model.checkUser(UserID, UserPass, Users);
-                model = model.getUser(UserID, UserPass, Users);
+                model = dbhelper.getUser(UserID, UserPass);
 
 
-                if (isAuthenticated)
+                if (model != null)
                 {
                     var claims = new List<Claim>
                     {
