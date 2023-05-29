@@ -6,6 +6,7 @@ using PROG3A_POE.Data;
 using PROG3A_POE.Models;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
+using System.Xml.Linq;
 
 namespace PROG3A_POE.Controllers
 {
@@ -103,9 +104,15 @@ namespace PROG3A_POE.Controllers
         public ActionResult ViewProducts(string id)
         {
             if (FarmerId != id) { FarmerId = id; }
-
             ViewBag.Id = id;
-            return View(dbhelper.GetProducts(FarmerId));
+
+            if (TempData["MyData"] == null)
+            {
+                TempData["MyData"] = dbhelper.GetProducts(FarmerId);
+            }
+            
+
+            return View(TempData["MyData"]);
         }
 
        
@@ -265,5 +272,37 @@ namespace PROG3A_POE.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Sort(int id, IFormCollection collection)
+        {
+            List<Product> products = new List<Product>();
+            try
+            {
+                string productType = collection["txtproductType"];
+                DateTime ? startDate = DateTime.Parse(collection["txtstartDate"]);
+                DateTime ? endDate = DateTime.Parse(collection["txtendDate"]);
+                if (productType != null) { 
+                    products =
+                    dbhelper.SortByProductType(dbhelper.GetProducts(FarmerId), productType);
+
+
+                }
+                if (startDate != null && endDate != null)
+                {
+                    products = dbhelper.SortByDateRange(products, startDate, endDate);
+                }
+
+                else { products = dbhelper.GetProducts(FarmerId); }
+
+                TempData["MyData"] = products;
+
+                return View("ViewProducts");
+            }
+            catch
+            {
+                return View("ViewProducts");
+            }
+        }
     }
 }

@@ -243,6 +243,16 @@ namespace PROG3A_POE.Data
             return myProduct;
         }
 
+        //sorting
+        public List<Product> SortByProductType(List<Product> products,string productType) {
+
+            List<Product> productSet = products.FindAll(x => x.ProductType == productType).ToList<Product>();
+            return productSet;
+        }
+        public List<Product> SortByDateRange(List<Product> products, DateTime? date1,DateTime? date2) {
+            List<Product> productSet = products.FindAll(x => x.ProductDate >= date1 && x.ProductDate <= date2).ToList<Product>();
+            return productSet;
+        }
     }
 }
 

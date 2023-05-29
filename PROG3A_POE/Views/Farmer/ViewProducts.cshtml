@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<PROG3A_POE.Models.Product>
-
+ 
 @{
     ViewData["Title"] = "ViewProducts";
     TempData.Keep("FarmerId");
@@ -7,7 +7,30 @@
 }
 
 <h1>Products for @ViewBag.Id</h1>
+<form asp-action="Sort" method="post">
+<div class="dropdown my-2 form-group">
+    Sort by 
+    <button asp-for="ProductType" class="btn btn-secondary dropdown-toggle mx-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="dpProductType" name="dpProdType">
+        Product Type
+    </button>
+    <ul class="dropdown-menu form-group">
+        <!-- Added "dropdown-menu-end" class -->
+        <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Fruits')">Fruits</a></li>
+        <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Vegetables')">Vegetables</a></li>
+        <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Grains')">Grains</a></li>
+        <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Dairy Products')">Dairy Products</a></li>
+        <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Poultry')">Poultry</a></li>
+    </ul>
+    <input type="hidden" name="txtproductType" id="selectedProdType" />
+    <input type="datetime-local" name="txtstartDate" class="mx-2">
+    <input type="datetime-local" name="txtendDate" class="mx-2">
+    
+        <input type="submit" value="Sort" class="btn btn-primary mx-2"  />
+    
+   
 
+</div>
+</form>
 <p>
     <a asp-action="CreateProduct" asp-route-id="@ViewBag.Id">Create New</a>
 
@@ -61,3 +84,15 @@
     </tbody>
 </table>
 <a asp-action="AllFarmers">Back to List</a>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function selectProdType(prodType) {
+            document.getElementById('dpProductType').textContent = prodType;
+            document.getElementById('selectedProdType').value = prodType;
+        }
+    </script>
+}
