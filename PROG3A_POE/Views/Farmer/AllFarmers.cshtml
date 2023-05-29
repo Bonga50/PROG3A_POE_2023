@@ -63,10 +63,31 @@
                 @Html.DisplayFor(modelItem => item.User_Roles)
             </td>
             <td>
-                    @Html.ActionLink("Edit", "Edit", new { id=item.Username  }) |
-                    @Html.ActionLink("Details", "Details", new { id=item.Username  }) |
-                    @Html.ActionLink("Delete", "Delete", new { id=item.Username  })  |
-                @Html.ActionLink("View Products", "ViewProducts", new {  id=item.Username })
+                    @if (selectedRole.Equals("Farmer"))
+                    {
+                        <span>
+                            @Html.ActionLink("Edit", "Edit", new { id=item.Username  })
+                        </span>
+                        <span>
+                    @Html.ActionLink("Details", "Details", new { id = item.Username }) </span>
+                        <span>
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Username }) </span>
+                        <span>
+                            @Html.ActionLink("View Products", "ViewProducts", new { id = item.Username })</span>
+                    }
+                    else{
+                        <span>
+                            @Html.ActionLink("Edit", "Edit", new { id=item.Username  })
+                        </span>
+                        <span>
+                        @Html.ActionLink("Details", "Details", new { id = item.Username }) 
+                        </span>
+                        <span>
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Username })
+                        </span>
+                        
+                        }
+
             </td>
         </tr>
 }
