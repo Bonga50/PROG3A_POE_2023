@@ -282,13 +282,15 @@ namespace PROG3A_POE.Controllers
                 string productType = collection["txtproductType"];
                 DateTime ? startDate = DateTime.Parse(collection["txtstartDate"]);
                 DateTime ? endDate = DateTime.Parse(collection["txtendDate"]);
+
+                DateTime targetDate = new DateTime(2023, 05, 30, 9, 30, 0);
                 if (productType != null) { 
                     products =
                     dbhelper.SortByProductType(dbhelper.GetProducts(FarmerId), productType);
 
 
                 }
-                if (startDate != null && endDate != null)
+                if (startDate != targetDate && endDate != targetDate)
                 {
                     products = dbhelper.SortByDateRange(products, startDate, endDate);
                 }
