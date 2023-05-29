@@ -2,9 +2,10 @@
 
 @{
     ViewData["Title"] = "CreateProduct";
+    TempData.Keep("FarmerId");
 }
 
-<h1>Create a Product for @ViewBag.Id</h1>
+<h1>Create a Product for @TempData["FarmerId"].ToString()</h1>
 
 <h4>Product</h4>
 <hr />
@@ -43,11 +44,11 @@
                 <input asp-for="ProductType" class="form-control" />
                 <span asp-validation-for="ProductType" class="text-danger"></span>
             </div>*@
-            @*<div class="form-group">
+            <div class="form-group">
                 <label asp-for="ProductDate" class="control-label"></label>
-                <input asp-for="ProductDate" class="form-control" />
+                <input asp-for="ProductDate" class="form-control" name="txtProductDate" />
                 <span asp-validation-for="ProductDate" class="text-danger"></span>
-            </div>*@
+            </div>
             <div class="form-group">
                 <label asp-for="Quantity" class="control-label"></label>
                 <input asp-for="Quantity" class="form-control" name="txtQuantity" />
@@ -61,7 +62,7 @@
 </div>
 
 <div>
-    <a asp-action="AllFarmers">Back to List</a>
+    <a asp-action="ViewProducts">Back to List</a>
 </div>
 
 @section Scripts {

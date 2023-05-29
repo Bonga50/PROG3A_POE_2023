@@ -52,9 +52,10 @@ namespace PROG3A_POE.Controllers
             {
                 string productName = collection["txtProductName"];
                 string productType = collection["txtproductType"];
+                DateTime date = DateTime.Parse(collection["txtProductDate"]);
                 int productQuantity = Int32.Parse(collection["txtQuantity"]);
                 
-                Product prod = new Product(productName, productType,DateTime.Now, productQuantity);
+                Product prod = new Product(productName, productType, date, productQuantity);
                 dbhelper.createProduct(prod,Username);
                 return RedirectToAction("AllProducts");
             }

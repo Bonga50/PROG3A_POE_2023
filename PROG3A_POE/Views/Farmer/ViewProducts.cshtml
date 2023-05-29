@@ -6,7 +6,7 @@
     
 }
 
-<h1>Products for @ViewBag.Id</h1>
+<h1>Products for @TempData["FarmerId"].ToString()</h1>
 <form asp-action="Sort" method="post">
 <div class="dropdown my-2 form-group">
     Sort by 
@@ -20,15 +20,15 @@
         <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Grains')">Grains</a></li>
         <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Dairy Products')">Dairy Products</a></li>
         <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('Poultry')">Poultry</a></li>
+            <li><a class="dropdown-item" asp-for="ProductType" href="#" onclick="selectProdType('All')">All</a></li>
     </ul>
     <input type="hidden" name="txtproductType" id="selectedProdType" />
-        <input type="datetime-local" name="txtstartDate" class="mx-2" value="2023-05-30T09:30">
-        <input type="datetime-local" name="txtendDate" class="mx-2" value="2023-05-30T09:30">
+        Start Date
+        <input type="datetime-local" name="txtstartDate" class="mx-2"  id="startDateInput">
+        End Date
+        <input type="datetime-local" name="txtendDate" class="mx-2" id="endDateInput">
 
-    
         <input type="submit" value="Sort" class="btn btn-primary mx-2"  />
-    
-   
 
 </div>
 </form>
@@ -95,5 +95,14 @@
             document.getElementById('dpProductType').textContent = prodType;
             document.getElementById('selectedProdType').value = prodType;
         }
+    </script>
+
+    <script>
+        var startDateInput = document.getElementById("startDateInput");
+        var endDateInput = document.getElementById("endDateInput");
+        var today = new Date();
+        var formattedToday = today.toISOString().slice(0, 16);
+        startDateInput.value = formattedToday;
+        endDateInput.value = formattedToday;
     </script>
 }

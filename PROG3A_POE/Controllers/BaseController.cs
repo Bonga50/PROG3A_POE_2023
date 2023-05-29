@@ -22,5 +22,11 @@ namespace PROG3A_POE.Controllers
             get => TempData["FarmerId"] as string;
             set => TempData["FarmerId"] = value;
         }
+
+        protected List<Product> MyData
+        {
+            get => TempData["MyData"] as List<Product>;
+            set => TempData["MyData"] = value;
+        }
     }
 }

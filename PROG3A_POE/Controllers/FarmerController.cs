@@ -103,16 +103,20 @@ namespace PROG3A_POE.Controllers
         // GET: FarmerController/Edit/5
         public ActionResult ViewProducts(string id)
         {
-            if (FarmerId != id) { FarmerId = id; }
-            ViewBag.Id = id;
-
-            if (TempData["MyData"] == null)
+            if (FarmerId == null)
             {
-                TempData["MyData"] = dbhelper.GetProducts(FarmerId);
+                FarmerId = id;
+            }
+            else if (id == null||FarmerId!=null) { id = FarmerId; }
+            ViewBag.Id = FarmerId;
+
+            if (MyData == null)
+            {
+                MyData = dbhelper.GetProducts(FarmerId);
             }
             
 
-            return View(TempData["MyData"]);
+            return View(MyData);
         }
 
        
@@ -191,10 +195,11 @@ namespace PROG3A_POE.Controllers
 
                 string productName = collection["txtProductName"];
                 string productType = collection["txtproductType"];
+                DateTime date = DateTime.Parse(collection["txtProductDate"]);
                 int productQuantity = Int32.Parse(collection["txtQuantity"]);
                 
-                Product prod = new Product(productName, productType, DateTime.Now, productQuantity);
-                dbhelper.createProduct(prod, id);
+                Product prod = new Product(productName, productType, date, productQuantity);
+                dbhelper.createProduct(prod, FarmerId);
                 
                 return RedirectToAction("ViewProducts", new { id = id });
 
@@ -283,23 +288,34 @@ namespace PROG3A_POE.Controllers
                 DateTime ? startDate = DateTime.Parse(collection["txtstartDate"]);
                 DateTime ? endDate = DateTime.Parse(collection["txtendDate"]);
 
-                DateTime targetDate = new DateTime(2023, 05, 30, 9, 30, 0);
-                if (productType != null) { 
+               
+                products = dbhelper.GetProducts(FarmerId);
+
+                if (productType.Equals("All")) { 
+                    MyData = products;
+                    return View("ViewProducts", MyData);
+                }
+                else if (productType != "" ) {
+                    products = dbhelper.GetProducts(FarmerId);
                     products =
-                    dbhelper.SortByProductType(dbhelper.GetProducts(FarmerId), productType);
+                    dbhelper.SortByProductType(products, productType);
 
 
                 }
-                if (startDate != targetDate && endDate != targetDate)
+                if (startDate != endDate)
                 {
-                    products = dbhelper.SortByDateRange(products, startDate, endDate);
+                    if (startDate != null && endDate != null)
+                    {
+                        products = dbhelper.SortByDateRange(products, startDate, endDate);
+                    }
                 }
+               
 
-                else { products = dbhelper.GetProducts(FarmerId); }
+                
 
-                TempData["MyData"] = products;
+                MyData = products;
 
-                return View("ViewProducts");
+                return View("ViewProducts",MyData);
             }
             catch
             {
