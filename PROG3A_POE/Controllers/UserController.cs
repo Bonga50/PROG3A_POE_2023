@@ -50,6 +50,10 @@ namespace PROG3A_POE.Controllers
         [HttpPost]
         public async Task<ActionResult> LoginUserAsync()
         {
+            try
+            {
+
+           
             string UserID = Request.Form["txtuserID"].ToString();
             string UserPass = Request.Form["txtPassword"].ToString();
 
@@ -93,9 +97,17 @@ namespace PROG3A_POE.Controllers
                     ModelState.AddModelError("", "Invalid username or password");
                 }
             }
+            }
+            catch (Exception)
+            {
+
+                return View("Login");
+            }
+            return View("Login");
 
             // If there are any validation errors or authentication failed, return the login view
-            return View("Login");
+
+
         }
         // POST: UserController/Create
         [HttpPost]

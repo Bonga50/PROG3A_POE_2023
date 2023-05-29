@@ -103,11 +103,11 @@ namespace PROG3A_POE.Controllers
         // GET: FarmerController/Edit/5
         public ActionResult ViewProducts(string id)
         {
-            if (FarmerId == null)
+            if (id != null)
             {
                 FarmerId = id;
             }
-            else if (id == null||FarmerId!=null) { id = FarmerId; }
+            
             ViewBag.Id = FarmerId;
 
             if (MyData == null)
